@@ -1,0 +1,48 @@
+version: '2'
+
+services:
+  cassandra_01:
+    command:  /bin/bash -c "sleep 10 && echo ' -- Pausing to let system catch up ... -->' && /docker-entrypoint.sh cassandra -f"
+    hostname: cassandra_01
+    image: "cassandra:3.10"
+    volumes:
+      - ./volumes/cassandra/01:/var/lib/cassandra
+    container_name: cassandra_01
+    mem_limit: 2g
+    environment: 
+     - CASSANDRA_SEEDS=172.33.128.1,172.33.128.2
+    ports:
+     - 17000:7000
+     - 17001:7001
+     - 17199:7199
+     - 19042:9042
+     - 19160:9160
+    networks:
+      backend:
+        ipv4_address: 172.33.128.1
+
+  cassandra_02:
+    command:  /bin/bash -c "sleep 120 && echo ' -- Pausing to let system catch up ... -->' && /docker-entrypoint.sh cassandra -f"
+    hostname: cassandra_02
+    image: "cassandra:3.10"
+    volumes:
+     - ./volumes/cassandra/02:/var/lib/cassandra
+    container_name: cassandra_02
+    mem_limit: 2g
+    environment: 
+     - CASSANDRA_SEEDS=172.33.128.1,172.33.128.2
+    ports:
+     - 27000:7000
+     - 27001:7001
+     - 27199:7199
+     - 29042:9042
+     - 29160:9160
+    networks:
+      backend:
+        ipv4_address: 172.33.128.2
+
+networks:
+  backend:
+    ipam:
+      config:
+        - subnet: 172.33.0.0/16
